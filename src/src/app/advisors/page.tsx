@@ -434,7 +434,7 @@ export default function AdvisorsPage() {
         className="mb-8 inline-block"
       >
         <img
-          src="/advisors-logo.jpg"
+          src={`${process.env.NEXT_PUBLIC_BASE_PATH || ""}/advisors-logo.jpg`}
           alt="The Career Lab"
           className="h-[90px] w-auto object-contain rounded-[28px] shadow-[0_10px_30px_rgba(0,0,0,0.12)] ring-1 ring-[#F5ECD7]/40 hover:opacity-95 transition-opacity cursor-pointer"
         />
