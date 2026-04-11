@@ -5,9 +5,9 @@ export const metadata: Metadata = {
   title: "Worksheet",
   description: "Worksheet for the Build Your Board of AI Advisors workshop",
   icons: {
-    icon: "/favicon.ico",
-    shortcut: "/favicon.ico",
-    apple: "/apple-touch-icon.png",
+    icon: `${process.env.NEXT_PUBLIC_BASE_PATH || ""}/favicon.ico`,
+    shortcut: `${process.env.NEXT_PUBLIC_BASE_PATH || ""}/favicon.ico`,
+    apple: `${process.env.NEXT_PUBLIC_BASE_PATH || ""}/apple-touch-icon.png`,
   },
 };
 
