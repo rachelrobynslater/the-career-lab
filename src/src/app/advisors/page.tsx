@@ -277,6 +277,9 @@ const STEP_LABELS = [
 
 export default function AdvisorsPage() {
   const [showIntro, setShowIntro] = useState(true);
+  const [gateEmail, setGateEmail] = useState('');
+  const [gateLoading, setGateLoading] = useState(false);
+  const [gateError, setGateError] = useState('');
   const [step, setStep] = useState(0);
   const [formData, setFormData] = useState<FormData>(initialFormData);
   const [copied, setCopied] = useState(false);
@@ -323,6 +326,28 @@ export default function AdvisorsPage() {
     setCopied(true);
     setTimeout(() => setCopied(false), 2500);
   }, []);
+
+  const handleGateSubmit = useCallback(async (e: React.FormEvent) => {
+    e.preventDefault();
+    setGateLoading(true);
+    setGateError('');
+    try {
+      const res = await fetch(process.env.NEXT_PUBLIC_FORMSPREE_ENDPOINT!, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify({ email: gateEmail }),
+      });
+      if (res.ok) {
+        setShowIntro(false);
+      } else {
+        setGateError('Something went wrong. Please try again.');
+      }
+    } catch {
+      setGateError('Something went wrong. Please try again.');
+    } finally {
+      setGateLoading(false);
+    }
+  }, [gateEmail]);
 
   const renderStepContent = () => {
     // Step 5: Generate Advisor Summaries Prompt
@@ -446,12 +471,26 @@ export default function AdvisorsPage() {
           Nothing you type here is saved, so if you refresh or close the page, your responses will be lost.
         </p>
 
-        <button
-          onClick={() => setShowIntro(false)}
-          className="px-10 py-3 bg-[#2F3A56] text-[#F8F4EC] border border-[#2F3A56] rounded-lg font-semibold hover:bg-[#243049] hover:border-[#243049] transition-colors cursor-pointer"
-        >
-          Start
-        </button>
+        <form onSubmit={handleGateSubmit} className="w-full max-w-xs flex flex-col gap-3">
+          <input
+            type="email"
+            required
+            value={gateEmail}
+            onChange={(e) => setGateEmail(e.target.value)}
+            placeholder="Enter your email to get started"
+            className="w-full bg-white border border-[#F5ECD7]/20 rounded-lg px-4 py-3 text-black placeholder-black/40 focus:outline-none focus:border-[#F5ECD7]/50 transition-colors"
+          />
+          {gateError && (
+            <p className="text-[#7A1020] text-sm text-center">{gateError}</p>
+          )}
+          <button
+            type="submit"
+            disabled={gateLoading || !gateEmail}
+            className="px-10 py-3 bg-[#2F3A56] text-[#F8F4EC] border border-[#2F3A56] rounded-lg font-semibold hover:bg-[#243049] hover:border-[#243049] transition-colors cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
+          >
+            {gateLoading ? 'Starting…' : 'Start'}
+          </button>
+        </form>
 
         <footer className="absolute bottom-0 w-full pt-4 pb-4 border-t border-[rgba(47,58,86,0.14)]">
           <div className="max-w-4xl mx-auto px-6 flex flex-col items-center text-center gap-1.5">
